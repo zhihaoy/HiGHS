@@ -57,7 +57,7 @@ set(failInstances
 set(settings
     " "
     "-m"
-    #"-pOn"
+    "-pOn"
     )
 
 # define a macro to add tests

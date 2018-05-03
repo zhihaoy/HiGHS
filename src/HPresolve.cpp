@@ -29,7 +29,7 @@ int HPresolve::presolve(int print)
 		}
 	}
 
-	//iPrint = 1;
+	iPrint = 1;
 
 	//counter for the different types of reductions
 	countRemovedCols.resize(HTICK_ITEMS_COUNT_PRE, 0);
@@ -73,13 +73,13 @@ int HPresolve::presolve(int print)
 		if (status)
 			return status;
 
-		removeRowSingletons();
-		if (status)
-			return status;
+//		removeRowSingletons();
+//		if (status)
+//			return status;
 		removeDoubletonEquations();
 		if (status)
 			return status;
-
+/*
 		removeRowSingletons();
 		if (status)
 			return status;
@@ -89,7 +89,7 @@ int HPresolve::presolve(int print)
 
 		removeDominatedColumns();
 		if (status)
-			return status;
+			return status; */
 
 		//***************** main loop ******************
 		iter++;
@@ -783,7 +783,7 @@ void HPresolve::removeIfFixed(int j)
 		{
 			if (flagRow.at(Aindex.at(k)))
 			{
-				int i = Aindex.at(k);
+				int i = Aindex.at(k);  
 
 				if (nzRow.at(i) == 0)
 				{
@@ -2267,7 +2267,7 @@ int HPresolve::getSingRowElementIndexInAR(int i)
 	if (rest < ARstart.at(i + 1))
 	{
 		cout << "Error during presolve: more variables found in singleton row " << i << ".";
-		return -1;
+		return -2;
 	}
 	return k;
 }
@@ -2288,7 +2288,7 @@ int HPresolve::getSingColElementIndexInA(int j)
 	if (rest < Aend.at(j))
 	{
 		cout << "Error during presolve: more variables found in singleton col " << j << ".";
-		return -1;
+		return -2;
 	}
 	return k;
 }
