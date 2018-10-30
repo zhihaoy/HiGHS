@@ -28,6 +28,8 @@
 #include <memory>
 #include <tuple>
 #include <utility>
+
+#include "LpData.h"
 #include "HConst.h"
 #include "Hash.hpp"
 #include "pdqsort.h"
@@ -54,6 +56,7 @@ class MpsParser {
   std::vector<double> rowUpper;
 
  public:
+  int loadProblem(LpData &lp);
   int loadProblem(const char *filename_, int &numRow_, int &numCol_,
                   int &objSense_, double &objOffset_, std::vector<int> &Astart_,
                   std::vector<int> &Aindex_, std::vector<double> &Avalue_,
@@ -142,6 +145,13 @@ bool operator==(boost::string_ref word, std::string str) {
     if (word.at(i) != str.at(i)) return false;
 
   return true;
+}
+
+int MpsParser::loadProblem(LpData &lp) {
+  // todo: read sense and offset from MPS file with new parser.
+  return loadProblem(lp.fileName, lp.numRow, lp.numCol, 1, 0, lp.Astart,
+                     lp.Aindex, lp.Avalue, lp.colCost, lp.colLower, lp.colUpper,
+                     lp.rowLower, lp.rowUpper);
 }
 
 int MpsParser::loadProblem(

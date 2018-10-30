@@ -1,4 +1,5 @@
 #include "HighsSetup.h"
+#include "Parsers.h"
 
 int main(int argc, char **argv) {
   // Load user options.
@@ -15,7 +16,7 @@ int main(int argc, char **argv) {
   // Read LpData from a file.
   LpData lp;
 /*
-  Status read_status = loadLpFromFile(options, lp);
+  int read_status = loadLpFromFile(options, lp);
   checkStatus(read_status);
 */
 

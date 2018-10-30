@@ -346,8 +346,10 @@ Status loadOptions(int argc, char** argv, Options& options_) {
 
 Status solveSimplex(const Options& opt, const LpData& lp, Solution& solution) {
   // until parsers work with LpData
-  HModel model;
-  int RtCd = model.load_fromMPS(opt.fileName);
+  // HModel model;
+  // int RtCd = model.load_fromMPS(opt.fileName);
+  
+  HModel model = HModelToLpData(lp);
 
   // make sure old tests pass before you start work on the
   // parsers. Then remove traces of read_fromMPS from below and replace the code
