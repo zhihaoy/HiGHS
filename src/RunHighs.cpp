@@ -1,29 +1,32 @@
 #include "HighsSetup.h"
+<<<<<<< HEAD
 #include "Parsers.h"
+=======
+#include "LoadProblem.h"
+>>>>>>> lpfilereader_fix
 
 int main(int argc, char **argv) {
   // Load user options.
-  Options options;
-  Status init_status = loadOptions(argc, argv, options);
+  HighsOptions options;
+  HighsStatus init_status = loadOptions(argc, argv, options);
 
-  if (init_status == Status::InputError) {
+  if (init_status != HighsStatus::OK) {
     printHelp(argv[0]);
     return 0;
   }
-  checkStatus(init_status);
 
-  // todo:
-  // Read LpData from a file.
-  LpData lp;
-/*
-  int read_status = loadLpFromFile(options, lp);
-  checkStatus(read_status);
-*/
+  // Read Lp from a file.
+  HighsLp lp;
+
+  HighsInputStatus read_status = loadLpFromFile(options, lp);
+  if (read_status != HighsInputStatus::OK) {
+    return (int) HighsStatus::LpError;
+  }
 
   Highs highs(options);
-  Solution solution;
+  HighsSolution solution;
 
-  Status run_status = highs.run(lp, solution);
+  HighsStatus run_status = highs.run(lp, solution);
   checkStatus(run_status);
 
   return 0;
