@@ -25,6 +25,7 @@ struct HighsOptions {
   int pami = 0;
   int sip = 0;
   int scip = 0;
+  int parser = 0;
 
   double timeLimit = 0;
   double cut = 0;

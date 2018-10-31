@@ -1,9 +1,5 @@
 #include "HighsSetup.h"
-<<<<<<< HEAD
-#include "Parsers.h"
-=======
 #include "LoadProblem.h"
->>>>>>> lpfilereader_fix
 
 int main(int argc, char **argv) {
   // Load user options.

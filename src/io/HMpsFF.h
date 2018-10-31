@@ -29,7 +29,7 @@
 #include <tuple>
 #include <utility>
 
-#include "LpData.h"
+#include "HighsLp.h"
 #include "HConst.h"
 #include "Hash.hpp"
 #include "pdqsort.h"
@@ -56,8 +56,8 @@ class MpsParser {
   std::vector<double> rowUpper;
 
  public:
-  int loadProblem(LpData &lp);
-  int loadProblem(const char *filename_, int &numRow_, int &numCol_,
+  int loadProblem(const HighsOptions& options, HighsLp &lp);
+  int loadProblem(const char* filename_, int &numRow_, int &numCol_,
                   int &objSense_, double &objOffset_, std::vector<int> &Astart_,
                   std::vector<int> &Aindex_, std::vector<double> &Avalue_,
                   std::vector<double> &colCost_, std::vector<double> &colLower_,
@@ -147,15 +147,17 @@ bool operator==(boost::string_ref word, std::string str) {
   return true;
 }
 
-int MpsParser::loadProblem(LpData &lp) {
-  // todo: read sense and offset from MPS file with new parser.
-  return loadProblem(lp.fileName, lp.numRow, lp.numCol, 1, 0, lp.Astart,
-                     lp.Aindex, lp.Avalue, lp.colCost, lp.colLower, lp.colUpper,
-                     lp.rowLower, lp.rowUpper);
+int MpsParser::loadProblem(const HighsOptions& options, HighsLp &lp) {
+  double objective_offset = 0;
+  int objective_sense = 1;
+
+  return loadProblem(options.fileName, lp.numRow_, lp.numCol_, objective_sense, objective_offset, lp.Astart_,
+                     lp.Aindex_, lp.Avalue_, lp.colCost_, lp.colLower_, lp.colUpper_,
+                     lp.rowLower_, lp.rowUpper_);
 }
 
 int MpsParser::loadProblem(
-    const char *filename_, int &numRow_, int &numCol_, int &objSense_,
+    const char* filename_, int &numRow_, int &numCol_, int &objSense_,
     double &objOffset_, std::vector<int> &Astart_, std::vector<int> &Aindex_,
     std::vector<double> &Avalue_, std::vector<double> &colCost_,
     std::vector<double> &colLower_, std::vector<double> &colUpper_,

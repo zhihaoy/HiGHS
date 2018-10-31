@@ -5,7 +5,7 @@
 
 class FilereaderLp : public Filereader {
  public:
-  FilereaderRetcode readModelFromFile(const char filename, HighsLp& model);
+  FilereaderRetcode readModelFromFile(const char* filename, HighsLp& model);
 };
 
 #endif
