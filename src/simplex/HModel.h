@@ -10,7 +10,7 @@
 #include "HRandom.h"
 #include "HTimer.h"
 #include "HVector.h"
-//#include "LpData.h"
+#include "HighsLp.h"
 
 #include <sstream>
 #include <string>
@@ -600,4 +600,8 @@ class HModel {
   double* getdualColLowerImplied() { return &dualColLowerImplied[0]; }
   int* getWorkIntBreak() { return &intBreak[0]; }
 };
+
+HighsLp HModeToHighsLp(HModel& model);
+HModel HighsLpToHModel(HighsLp& lp);
+
 #endif /* HMODEL_H_ */

@@ -5012,4 +5012,38 @@ void HModel::util_anMlSol() {
     printf("Other values = %11.4g\n", lcValue_OtherCo);
   }
 }
+
+HighsLp HModeToHighsLp(HModel& model) {
+  HighsLp lp;
+  lp.numCol_ = std::move(model.numCol_);
+  lp.numRow_ = std::move(model.numRow_);
+
+  lp.Astart_ = std::move(model.Astart_);
+  lp.Aindex_ = std::move(model.Aindex_);
+  lp.Avalue_ = std::move(model.Avalue_);
+  lp.colCost_ = std::move(model.colCost_);
+  lp.colLower_ = std::move(model.colLower_);
+  lp.colUpper_ = std::move(model.colUpper_);
+  lp.rowLower_ = std::move(model.rowLower_);
+  lp.rowUpper_ = std::move(model.rowUpper_);
+
+  return lp;
+}
+
+HModel HighsLpToHModel(HighsLp& lp) {
+
+  HModel model;
+  model.numCol_ = std::move(lp.numCol_);
+  model.numRow_ = std::move(lp.numRow_);
+
+  model.Astart_ = std::move(lp.Astart_);
+  model.Aindex_ = std::move(lp.Aindex_);
+  model.Avalue_ = std::move(lp.Avalue_);
+  model.colCost_ = std::move(lp.colCost_);
+  model.colLower_ = std::move(lp.colLower_);
+  model.colUpper_ = std::move(lp.colUpper_);
+  model.rowLower_ = std::move(lp.rowLower_);
+  model.rowUpper_ = std::move(lp.rowUpper_);
+}
+
 #endif
