@@ -29,9 +29,9 @@
 #include <tuple>
 #include <utility>
 
-#include "HighsLp.h"
 #include "HConst.h"
 #include "Hash.hpp"
+#include "HighsLp.h"
 #include "pdqsort.h"
 
 using Triplet = std::tuple<int, int, double>;
@@ -56,8 +56,8 @@ class MpsParser {
   std::vector<double> rowUpper;
 
  public:
-  int loadProblem(const HighsOptions& options, HighsLp &lp);
-  int loadProblem(const char* filename_, int &numRow_, int &numCol_,
+  int loadProblem(const HighsOptions &options, HighsLp &lp);
+  int loadProblem(const char *filename_, int &numRow_, int &numCol_,
                   int &objSense_, double &objOffset_, std::vector<int> &Astart_,
                   std::vector<int> &Aindex_, std::vector<double> &Avalue_,
                   std::vector<double> &colCost_, std::vector<double> &colLower_,
