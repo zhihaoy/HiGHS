@@ -17,7 +17,6 @@ set(sources
     io/HinOut.cpp
     io/HMPSIO.cpp
     io/HToyIO.cpp
-    io/HMpsFF.cpp
     io/FilereaderLp.cpp
     io/FilereaderMps.cpp
     test/KktCheck.cpp
@@ -42,7 +41,6 @@ set(headers
     presolve/HPresolve.h
     io/HinOut.h
     io/HMPSIO.h
-    io/HMpsFF.h
     io/Filereader.h
     io/FilereaderLp.h
     io/FilereaderMps.h

@@ -20,8 +20,6 @@ FilereaderRetcode FilereaderMps::readModelFromFile(const HighsOptions options,
   return FilereaderRetcode::OKAY;
 }
 
-
-
 bool operator==(boost::string_ref word, std::string str) {
   unsigned int n = str.length();
   if (word.size() != n) return false;
