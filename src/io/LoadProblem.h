@@ -14,14 +14,14 @@ HighsInputStatus loadLpFromFile(const HighsOptions& options, HighsLp& lp) {
     return HighsInputStatus::FileNotFound;
   }
 
-  // todo: check file name extenion 
+  // todo: check file name extenion
   // if (mps) use FilereaderMps
   FilereaderMps reader;
   reader.readModelFromFile(options, lp);
- 
+
   // else if (lp) use FilereaderLp
 
-  return checkLp(lp); 
+  return checkLp(lp);
 }
 
 #endif

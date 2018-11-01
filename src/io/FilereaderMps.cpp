@@ -5,27 +5,25 @@
 
 const double infinity() { return HSOL_CONST_INF; }
 
-int readMpsFreeFormatParser(const HighsOptions& options, HighsLp& lp) {
+int readMpsFreeFormatParser(const HighsOptions &options, HighsLp &lp) {
   MpsParser parser{};
   int result = parser.loadProblem(options, lp);
   return result;
 }
 
-
-int readMpsFixedFormatParser(const HighsOptions& options, HighsLp& lp) {
+int readMpsFixedFormatParser(const HighsOptions &options, HighsLp &lp) {
   double objective_offset = 0;
   int objective_sense = 1;
   std::vector<int> integers;
 
-  return readMPS(options.fileName, 0, 0, lp.numRow_, lp.numCol_, objective_sense,
-                     objective_offset, lp.Astart_, lp.Aindex_, lp.Avalue_,
-                     lp.colCost_, lp.colLower_, lp.colUpper_, lp.rowLower_,
-                     lp.rowUpper_, integers);
+  return readMPS(options.fileName, 0, 0, lp.numRow_, lp.numCol_,
+                 objective_sense, objective_offset, lp.Astart_, lp.Aindex_,
+                 lp.Avalue_, lp.colCost_, lp.colLower_, lp.colUpper_,
+                 lp.rowLower_, lp.rowUpper_, integers);
 }
 
 FilereaderRetcode FilereaderMps::readModelFromFile(const HighsOptions options,
-                                                  HighsLp& lp) {
-
+                                                   HighsLp &lp) {
   // For the moment use new one only, until you fix the old one too
   // if (free format and boost use free)
   // else use fixed
@@ -37,8 +35,7 @@ FilereaderRetcode FilereaderMps::readModelFromFile(const HighsOptions options,
   } else {
     status = readMpsFixedFormatParser(options, lp);
   }
-  if (status) 
-    return FilereaderRetcode::PARSERERROR;
+  if (status) return FilereaderRetcode::PARSERERROR;
 
   return FilereaderRetcode::OKAY;
 }
@@ -69,7 +66,6 @@ int MpsParser::loadProblem(
     std::vector<double> &Avalue_, std::vector<double> &colCost_,
     std::vector<double> &colLower_, std::vector<double> &colUpper_,
     std::vector<double> &rowLower_, std::vector<double> &rowUpper_) {
-
   std::string filename(filename_);
   status = parseFile(filename);
 
@@ -98,8 +94,6 @@ int MpsParser::loadProblem(
 
   return status;
 }
-
-
 
 int MpsParser::fillArrays() {
   assert(nnz >= 0);

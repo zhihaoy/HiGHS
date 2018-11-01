@@ -1,7 +1,6 @@
 #ifndef IO_FILEREADER_MPS_H_
 #define IO_FILEREADER_MPS_H_
 
-#include "Filereader.h"
 #include <cassert>
 #include <cmath>
 #include <cstdio>
@@ -10,14 +9,18 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include "Filereader.h"
 
-#include <algorithm>
+#ifdef BOOST_Found
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
-  #include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/utility/string_ref.hpp>
+#endif
+
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -39,8 +42,8 @@ const double infinity();
 
 bool operator==(boost::string_ref word, std::string str);
 
-int readMpsFreeFormatParser(const HighsOptions& options, HighsLp& lp);
-int readMpsFixedFormatParser(const HighsOptions& options, HighsLp& lp);
+int readMpsFreeFormatParser(const HighsOptions &options, HighsLp &lp);
+int readMpsFixedFormatParser(const HighsOptions &options, HighsLp &lp);
 
 // Free format parser class. The old fixed parser is in HMPSIO.h
 class MpsParser {
@@ -144,9 +147,10 @@ class MpsParser {
 
 class FilereaderMps : public Filereader {
  public:
-  FilereaderRetcode readModelFromFile(const HighsOptions options, HighsLp& lp);
-  FilereaderRetcode readModelFromFile(const char* filename, HighsLp& model) { return FilereaderRetcode::OKAY; } 
+  FilereaderRetcode readModelFromFile(const HighsOptions options, HighsLp &lp);
+  FilereaderRetcode readModelFromFile(const char *filename, HighsLp &model) {
+    return FilereaderRetcode::OKAY;
+  }
 };
-
 
 #endif

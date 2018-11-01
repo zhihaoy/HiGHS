@@ -38,11 +38,11 @@ HighsStatus Highs::run(const HighsLp& lp, HighsSolution& solution) const {
 
   // todo
   //
-  //if (!options_.presolve) {
+  // if (!options_.presolve) {
   //  HighsSolution solution;
   //  return runSolver(lp, solution);
   //}
-  //return HighsStatus::NotImplemented;
+  // return HighsStatus::NotImplemented;
 
   /*
    HighsLp reduced_lp;
@@ -321,7 +321,7 @@ HighsStatus loadOptions(int argc, char** argv, HighsOptions& options_) {
 
 // todo: when options are passed properly add options for parser and choose
 // what to set in options here. For the moment:
-// Free format mps parser by default if boost is available. Else use fixed. dsafdsaf
+// Free format mps parser by default if boost is available. Else use fixed.
 #if defined(Boost_FOUND) && !defined(OLD_PARSER)
   options_.parser_type = HighsMpsParserType::free;
 #else
@@ -333,7 +333,6 @@ HighsStatus loadOptions(int argc, char** argv, HighsOptions& options_) {
 
 HighsStatus solveSimplex(const HighsOptions& opt, const HighsLp& lp,
                          HighsSolution& solution) {
-
   HModel model;
   model.loadFromHighsLp(lp);
 

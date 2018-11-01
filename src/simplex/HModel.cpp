@@ -3,9 +3,7 @@
 #include "HMPSIO.h"
 #include "HPresolve.h"
 #include "HTimer.h"
-#ifdef Boost_FOUND
 #include "FilereaderMps.h"
-#endif
 #include "HToyIO.h"
 
 #include <algorithm>
