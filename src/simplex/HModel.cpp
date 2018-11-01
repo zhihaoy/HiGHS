@@ -49,6 +49,24 @@ HModel::HModel() {
   totalTime = 0;
 }
 
+void HModel::loadFromHighsLp( const HighsLp& lp) {
+  this->numCol = lp.numCol_;
+  this->numRow = lp.numRow_;
+  this->numTot = numCol + numRow;
+
+  this->Astart = lp.Astart_;
+  this->Aindex = lp.Aindex_;
+  this->Avalue = lp.Avalue_;
+  this->colCost = lp.colCost_;
+  this->colLower = lp.colLower_;
+  this->colUpper = lp.colUpper_;
+  this->rowLower = lp.rowLower_;
+  this->rowUpper = lp.rowUpper_;
+
+  initScale();
+  initWithLogicalBasis();
+}
+
 int HModel::load_fromMPS(const char *filename) {
   // Remove any current model
   clearModel();
@@ -5013,37 +5031,22 @@ void HModel::util_anMlSol() {
   }
 }
 
-HighsLp HModeToHighsLp(HModel& model) {
+HighsLp HModelToHighsLp( HModel& model ) {
   HighsLp lp;
-  lp.numCol_ = std::move(model.numCol_);
-  lp.numRow_ = std::move(model.numRow_);
+  lp.numCol_ = std::move(model.numCol);
+  lp.numRow_ = std::move(model.numRow);
 
-  lp.Astart_ = std::move(model.Astart_);
-  lp.Aindex_ = std::move(model.Aindex_);
-  lp.Avalue_ = std::move(model.Avalue_);
-  lp.colCost_ = std::move(model.colCost_);
-  lp.colLower_ = std::move(model.colLower_);
-  lp.colUpper_ = std::move(model.colUpper_);
-  lp.rowLower_ = std::move(model.rowLower_);
-  lp.rowUpper_ = std::move(model.rowUpper_);
+  lp.Astart_ = std::move(model.Astart);
+  lp.Aindex_ = std::move(model.Aindex);
+  lp.Avalue_ = std::move(model.Avalue);
+  lp.colCost_ = std::move(model.colCost);
+  lp.colLower_ = std::move(model.colLower);
+  lp.colUpper_ = std::move(model.colUpper);
+  lp.rowLower_ = std::move(model.rowLower);
+  lp.rowUpper_ = std::move(model.rowUpper);
 
   return lp;
 }
 
-HModel HighsLpToHModel(HighsLp& lp) {
-
-  HModel model;
-  model.numCol_ = std::move(lp.numCol_);
-  model.numRow_ = std::move(lp.numRow_);
-
-  model.Astart_ = std::move(lp.Astart_);
-  model.Aindex_ = std::move(lp.Aindex_);
-  model.Avalue_ = std::move(lp.Avalue_);
-  model.colCost_ = std::move(lp.colCost_);
-  model.colLower_ = std::move(lp.colLower_);
-  model.colUpper_ = std::move(lp.colUpper_);
-  model.rowLower_ = std::move(lp.rowLower_);
-  model.rowUpper_ = std::move(lp.rowUpper_);
-}
 
 #endif

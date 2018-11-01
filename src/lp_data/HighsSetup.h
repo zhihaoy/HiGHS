@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "HApp.h"
+#include "HModel.h"
 
 // Class to set parameters and run HiGHS
 class Highs {
@@ -320,11 +321,11 @@ HighsStatus loadOptions(int argc, char** argv, HighsOptions& options_) {
 
 // todo: when options are passed properly add options for parser and choose
 // what to set in options here. For the moment:
-// Free format mps parser by default if boost is available. Else use fixed.
+// Free format mps parser by default if boost is available. Else use fixed. dsafdsaf
 #if defined(Boost_FOUND) && !defined(OLD_PARSER)
   options_.parser_type = HighsMpsParserType::free;
 #else
-  options_.parser_type = HighsMpsParserType::free;
+  options_.parser_type = HighsMpsParserType::fixed;
 #endif
 
   return HighsStatus::OK;
@@ -332,12 +333,9 @@ HighsStatus loadOptions(int argc, char** argv, HighsOptions& options_) {
 
 HighsStatus solveSimplex(const HighsOptions& opt, const HighsLp& lp,
                          HighsSolution& solution) {
-  // IN PROGRESS parsers work with HighsLp
 
-  // make sure old tests pass before you start work on the
-  // parsers. Then remove traces of read_fromMPS from below and replace the code
-  // above with
-  HModel model = HighsLpToHModel(lp);
+  HModel model;
+  model.loadFromHighsLp(lp);
 
   cout << "=================================================================="
           "=="

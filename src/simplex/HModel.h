@@ -112,6 +112,7 @@ class HModel {
                        int XnumRow, const double* XrowLower,
                        const double* XrowUpper, int XnumNz, const int* XAstart,
                        const int* XAindex, const double* XAvalue);
+  void loadFromHighsLp(const HighsLp& lp);                     
   void load_fromPresolve(HPresolve* ptr_model);
   void load_fromPresolve(HPresolve& ptr_model);
   void load_fromPostsolve(HPresolve* ptr_model);
@@ -602,6 +603,5 @@ class HModel {
 };
 
 HighsLp HModeToHighsLp(HModel& model);
-HModel HighsLpToHModel(HighsLp& lp);
 
 #endif /* HMODEL_H_ */
