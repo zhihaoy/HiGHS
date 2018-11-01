@@ -318,19 +318,26 @@ HighsStatus loadOptions(int argc, char** argv, HighsOptions& options_) {
   options_.crashMode = crashMode;
   options_.partitionFile = partitionFile;
 
+// todo: when options are passed properly add options for parser and choose
+// what to set in options here. For the moment:
+// Free format mps parser by default if boost is available. Else use fixed.
+#if defined(Boost_FOUND) && !defined(OLD_PARSER)
+  options_.parser_type = HighsMpsParserType::free;
+#else
+  options_.parser_type = HighsMpsParserType::free;
+#endif
+
   return HighsStatus::OK;
 }
 
 HighsStatus solveSimplex(const HighsOptions& opt, const HighsLp& lp,
                          HighsSolution& solution) {
-  // until parsers work with HighsLp
-  HModel model;
-  int RtCd = model.load_fromMPS(opt.fileName);
+  // IN PROGRESS parsers work with HighsLp
 
   // make sure old tests pass before you start work on the
   // parsers. Then remove traces of read_fromMPS from below and replace the code
   // above with
-  // HModel model = HighsLpToHModel(lp);
+  HModel model = HighsLpToHModel(lp);
 
   cout << "=================================================================="
           "=="

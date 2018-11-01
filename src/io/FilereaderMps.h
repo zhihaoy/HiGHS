@@ -31,17 +31,18 @@
 #include "HighsLp.h"
 #include "pdqsort.h"
 
+#include "HMPSIO.h"
+
 using Triplet = std::tuple<int, int, double>;
 
 const double infinity();
 
-int readMPS_FF(const char *filename, int &numRow, int &numCol, int &objSense,
-               double &objOffset, std::vector<int> &Astart,
-               std::vector<int> &Aindex, std::vector<double> &Avalue,
-               std::vector<double> &colCost, std::vector<double> &colLower,
-               std::vector<double> &colUpper, std::vector<double> &rowLower,
-               std::vector<double> &rowUpper);
+bool operator==(boost::string_ref word, std::string str);
 
+int readMpsFreeFormatParser(const HighsOptions& options, HighsLp& lp);
+int readMpsFixedFormatParser(const HighsOptions& options, HighsLp& lp);
+
+// Free format parser class. The old fixed parser is in HMPSIO.h
 class MpsParser {
  private:
   int status;

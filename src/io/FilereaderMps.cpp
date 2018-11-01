@@ -5,17 +5,40 @@
 
 const double infinity() { return HSOL_CONST_INF; }
 
+int readMpsFreeFormatParser(const HighsOptions& options, HighsLp& lp) {
+  MpsParser parser{};
+  int result = parser.loadProblem(options, lp);
+  return result;
+}
+
+
+int readMpsFixedFormatParser(const HighsOptions& options, HighsLp& lp) {
+  double objective_offset = 0;
+  int objective_sense = 1;
+  std::vector<int> integers;
+
+  return readMPS(options.fileName, 0, 0, lp.numRow_, lp.numCol_, objective_sense,
+                     objective_offset, lp.Astart_, lp.Aindex_, lp.Avalue_,
+                     lp.colCost_, lp.colLower_, lp.colUpper_, lp.rowLower_,
+                     lp.rowUpper_, integers);
+}
+
 FilereaderRetcode FilereaderMps::readModelFromFile(const HighsOptions options,
                                                   HighsLp& lp) {
 
-  // todo
-  // Which parser
-  // will be (options.getValue("parser") == MpsParser::new)
-  // For the moment use new one only, until you fix the old one too.
+  // For the moment use new one only, until you fix the old one too
+  // if (free format and boost use free)
+  // else use fixed
 
-  MpsParser parser;
-  parser.loadProblem(options, lp);
-  // call MPSParser::loadProblem(arrays of HighsLp object)
+  // will be (options.getValue("parser") == MpsParser::new)
+  int status;
+  if (options.parser_type == HighsMpsParserType::free) {
+    status = readMpsFreeFormatParser(options, lp);
+  } else {
+    status = readMpsFixedFormatParser(options, lp);
+  }
+  if (status) 
+    return FilereaderRetcode::PARSERERROR;
 
   return FilereaderRetcode::OKAY;
 }
@@ -46,8 +69,8 @@ int MpsParser::loadProblem(
     std::vector<double> &Avalue_, std::vector<double> &colCost_,
     std::vector<double> &colLower_, std::vector<double> &colUpper_,
     std::vector<double> &rowLower_, std::vector<double> &rowUpper_) {
-  std::string filename(filename_);
 
+  std::string filename(filename_);
   status = parseFile(filename);
 
   if (!status) {
@@ -76,19 +99,7 @@ int MpsParser::loadProblem(
   return status;
 }
 
-int readMPS_FF(const char *filename, int &numRow, int &numCol, int &objSense,
-               double &objOffset, std::vector<int> &Astart,
-               std::vector<int> &Aindex, std::vector<double> &Avalue,
-               std::vector<double> &colCost, std::vector<double> &colLower,
-               std::vector<double> &colUpper, std::vector<double> &rowLower,
-               std::vector<double> &rowUpper) {
-  MpsParser parser{};
-  int result = parser.loadProblem(filename, numRow, numCol, objSense, objOffset,
-                                  Astart, Aindex, Avalue, colCost, colLower,
-                                  colUpper, rowLower, rowUpper);
 
-  return result;
-}
 
 int MpsParser::fillArrays() {
   assert(nnz >= 0);
