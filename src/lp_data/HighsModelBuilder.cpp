@@ -7,27 +7,18 @@
 /*    Available as open-source under the MIT License                     */
 /*                                                                       */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/**@file io/HToyIO.h
- * @brief Read an LP or MIP model in toy format
+/**@file lp_data/HighsModelBuilder.cpp
+ * @brief 
  * @author Julian Hall, Ivet Galabova, Qi Huangfu and Michael Feldmeier
  */
-#ifndef IO_HTOYIO_H_
-#define IO_HTOYIO_H_
+#include "HighsModelBuilder.h"
 
-//#include <cmath>
-//#include <cstring>
-//#include <cstdio>
-//#include <fstream>
-//#include <iostream>
-// using namespace std;
+void HighsModelBuilder::HighsAddVar(HighsVar& var) {
+  this->variables.push_back(var);
+}
 
-int readToy_LP_cpp(const char* filename, int* m_p, int* n_p, int* maxmin,
-                   double* offset, double** A, double** b, double** c,
-                   double** lb, double** ub);
+void HighsModelBuilder::HighsAddCons(HighsCons& cons) {
+  this->constraints.push_back(cons);
+}
 
-int readToy_MIP_cpp(const char* filename, int* numRow_p, int* numCol_p,
-                    int* objSense_p, double* objOffset_p, double** A_cw_p,
-                    double** rhs_p, double** cost_p, double** lb_p,
-                    double** ub_p, int** integerColumn);
-
-#endif /* IO_HTOYIO_H_ */
+void HighsModelBuilder::HighsCreateLp(HighsLp& lp) {}
