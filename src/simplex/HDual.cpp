@@ -313,6 +313,7 @@ void HDual::solve(HighsModelObject &ref_highs_model_object, int variant, int num
       int reportCount = sizeof(reportList) / sizeof(int);
       model->timer.report(reportCount, reportList, 0.0);
       timer_.reportDualSimplexOuterClock();
+      NWreportDualSimplexOuterClock(ref_highs_model_object);
     }
   }
 
