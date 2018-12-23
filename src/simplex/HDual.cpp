@@ -296,6 +296,8 @@ void HDual::solve(HighsModelObject &ref_highs_model_object, int variant, int num
     int reportCount = sizeof(reportList) / sizeof(int);
     model->timer.report(reportCount, reportList, 0.0);
     timer_.reportDualSimplexInnerClock();
+    NWreportDualSimplexInnerClock(ref_highs_model_object);
+
     bool rpIterate = true;
     if (rpIterate) {
       int reportList[] = {HTICK_ITERATE};
