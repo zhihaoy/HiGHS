@@ -255,7 +255,9 @@ void HDual::solve(HighsModelObject &ref_highs_model_object, int variant, int num
     model->mlFg_haveDualObjectiveValue = 0;
     switch (solvePhase) {
       case 1:
-        solve_phase1(ref_highs_model_object);
+        solve_phase1(
+		     //		     ref_highs_model_object
+		     );
 #ifdef HiGHSDEV
         n_ph1_du_it += (model->numberIteration - it0);
 #endif
@@ -535,7 +537,9 @@ void HDual::init_slice(int init_sliced_num) {
   }
 }
 
-void HDual::solve_phase1(HighsModelObject &highs_model_object) {
+void HDual::solve_phase1(
+			 //HighsModelObject &highs_model_object
+) {
   model->util_reportMessage("dual-phase-1-start");
   // Switch to dual phase 1 bounds
   model->initBound(1);

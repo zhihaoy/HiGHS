@@ -137,7 +137,7 @@ class HDual {
    * @brief Perform Phase 1 dual simplex iterations
    */
   void solve_phase1(
-		    HighsModelObject &highs_model_object //!< Model object for phase 1 iterations
+		    //		    HighsModelObject &highs_model_object //!< Model object for phase 1 iterations
 		    );
 
   /**
