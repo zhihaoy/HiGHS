@@ -312,7 +312,6 @@ void HDual::solve(HighsModelObject &ref_highs_model_object, int variant, int num
           HTICK_ITERATE_PRIMAL,  HTICK_ITERATE_DEVEX_IZ, HTICK_ITERATE_PIVOTS};
       int reportCount = sizeof(reportList) / sizeof(int);
       model->timer.report(reportCount, reportList, 0.0);
-      timer_.reportDualSimplexOuterClock();
       NWreportDualSimplexOuterClock(ref_highs_model_object);
     }
   }
@@ -553,10 +552,10 @@ void HDual::solve_phase1(HighsModelObject &highs_model_object) {
   timer_.start(highs_model_object.simplex_.clock_[IterateClock]);
   model->timer.recordStart(HTICK_ITERATE);
   for (;;) {
-    timer_.start(timer_.IterateRebuildClock);
+    timer_.start(highs_model_object.simplex_.clock_[IterateRebuildClock]);
     model->timer.recordStart(HTICK_ITERATE_REBUILD);
     rebuild();
-    timer_.stop(timer_.IterateRebuildClock);
+    timer_.stop(highs_model_object.simplex_.clock_[IterateRebuildClock]);
     model->timer.recordFinish(HTICK_ITERATE_REBUILD);
     for (;;) {
       switch (dual_variant) {
@@ -669,10 +668,10 @@ void HDual::solve_phase2(HighsModelObject &highs_model_object) {
   for (;;) {
     // Outer loop of solve_phase2()
     // Rebuild all values, reinverting B if updates have been performed
-    timer_.start(timer_.IterateRebuildClock);
+    timer_.start(highs_model_object.simplex_.clock_[IterateRebuildClock]);
     model->timer.recordStart(HTICK_ITERATE_REBUILD);
     rebuild();
-    timer_.stop(timer_.IterateRebuildClock);
+    timer_.stop(highs_model_object.simplex_.clock_[IterateRebuildClock]);
     model->timer.recordFinish(HTICK_ITERATE_REBUILD);
     if (dualInfeasCount > 0) break;
     for (;;) {
@@ -942,19 +941,19 @@ void HDual::iterate(HighsModelObject &highs_model_object) {
   // Reporting:
   // Row-wise matrix after update in updateMatrix(columnIn, columnOut);
   HighsTimer &timer_ = highs_model_object.timer_;
-  timer_.start(timer_.IterateChuzrClock);
+  timer_.start(highs_model_object.simplex_.clock_[IterateChuzrClock]);
   model->timer.recordStart(HTICK_ITERATE_CHUZR);
   chooseRow();
-  timer_.stop(timer_.IterateChuzrClock);
+  timer_.stop(highs_model_object.simplex_.clock_[IterateChuzrClock]);
   model->timer.recordFinish(HTICK_ITERATE_CHUZR);
 
-  timer_.start(timer_.IterateChuzcClock);
+  timer_.start(highs_model_object.simplex_.clock_[IterateChuzcClock]);
   model->timer.recordStart(HTICK_ITERATE_CHUZC);
   chooseColumn(&row_ep);
-  timer_.stop(timer_.IterateChuzcClock);
+  timer_.stop(highs_model_object.simplex_.clock_[IterateChuzcClock]);
   model->timer.recordFinish(HTICK_ITERATE_CHUZC);
 
-  timer_.start(timer_.IterateFtranClock);
+  timer_.start(highs_model_object.simplex_.clock_[IterateFtranClock]);
   model->timer.recordStart(HTICK_ITERATE_FTRAN);
   updateFtranBFRT();
   // updateFtran(); computes the pivotal column in the data structure "column"
@@ -962,44 +961,44 @@ void HDual::iterate(HighsModelObject &highs_model_object) {
 
   // updateFtranDSE performs the DSE FTRAN on pi_p
   if (EdWt_Mode == EdWt_Mode_DSE) updateFtranDSE(&row_ep);
-  timer_.stop(timer_.IterateFtranClock);
+  timer_.stop(highs_model_object.simplex_.clock_[IterateFtranClock]);
   model->timer.recordFinish(HTICK_ITERATE_FTRAN);
 
   // updateVerify() Checks row-wise pivot against column-wise pivot for
   // numerical trouble
-  timer_.start(timer_.IterateVerifyClock);
+  timer_.start(highs_model_object.simplex_.clock_[IterateVerifyClock]);
   model->timer.recordStart(HTICK_ITERATE_VERIFY);
   updateVerify();
-  timer_.stop(timer_.IterateVerifyClock);
+  timer_.stop(highs_model_object.simplex_.clock_[IterateVerifyClock]);
   model->timer.recordFinish(HTICK_ITERATE_VERIFY);
 
   // updateDual() Updates the dual values
-  timer_.start(timer_.IterateDualClock);
+  timer_.start(highs_model_object.simplex_.clock_[IterateDualClock]);
   model->timer.recordStart(HTICK_ITERATE_DUAL);
   updateDual();
-  timer_.stop(timer_.IterateDualClock);
+  timer_.stop(highs_model_object.simplex_.clock_[IterateDualClock]);
   model->timer.recordFinish(HTICK_ITERATE_DUAL);
 
   // updatePrimal(&row_ep); Updates the primal values and the edge weights
-  timer_.start(timer_.IteratePrimalClock);
+  timer_.start(highs_model_object.simplex_.clock_[IteratePrimalClock]);
   model->timer.recordStart(HTICK_ITERATE_PRIMAL);
   updatePrimal(&row_ep);
-  timer_.stop(timer_.IteratePrimalClock);
+  timer_.stop(highs_model_object.simplex_.clock_[IteratePrimalClock]);
   model->timer.recordFinish(HTICK_ITERATE_PRIMAL);
 
   if ((EdWt_Mode == EdWt_Mode_Dvx) && (nw_dvx_fwk)) {
-    timer_.start(timer_.IterateDevexIzClock);
+    timer_.start(highs_model_object.simplex_.clock_[IterateDevexIzClock]);
     model->timer.recordStart(HTICK_ITERATE_DEVEX_IZ);
     iz_dvx_fwk();
-    timer_.stop(timer_.IterateDevexIzClock);
+    timer_.stop(highs_model_object.simplex_.clock_[IterateDevexIzClock]);
     model->timer.recordFinish(HTICK_ITERATE_DEVEX_IZ);
   }
 
   // Update the basis representation
-  timer_.start(timer_.IteratePivotsClock);
+  timer_.start(highs_model_object.simplex_.clock_[IteratePivotsClock]);
   model->timer.recordStart(HTICK_ITERATE_PIVOTS);
   updatePivots();
-  timer_.stop(timer_.IteratePivotsClock);
+  timer_.stop(highs_model_object.simplex_.clock_[IteratePivotsClock]);
   model->timer.recordFinish(HTICK_ITERATE_PIVOTS);
 
   // Analyse the iteration: possibly report; possibly switch strategy
