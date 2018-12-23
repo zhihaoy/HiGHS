@@ -28,6 +28,7 @@
 #include "HighsLp.h"
 #include "HighsIO.h"
 #include "HighsModelObject.h"
+#include "SimplexTimer.h"
 
 using std::runtime_error;
 using std::cout;
@@ -42,6 +43,8 @@ void HDual::solve(HighsModelObject &ref_highs_model_object, int variant, int num
   model->scale_ = &ref_highs_model_object.scale_;
   //  model = highs_model_object.hmodel_[0];// works with primitive types but not sure about class types.
   dual_variant = variant;
+
+  NWinitialiseDualSimplexClocks(ref_highs_model_object);
 
   // Setup aspects of the model data which are needed for solve() but better
   // left until now for efficiency reasons.
@@ -298,7 +301,7 @@ void HDual::solve(HighsModelObject &ref_highs_model_object, int variant, int num
       int reportList[] = {HTICK_ITERATE};
       int reportCount = sizeof(reportList) / sizeof(int);
       model->timer.report(reportCount, reportList, 0.0);
-      timer_.reportDualSimplexIterateClock();
+      NWreportDualSimplexIterateClock(ref_highs_model_object);
     }
     if (rpIterate) {
       int reportList[] = {
@@ -543,7 +546,8 @@ void HDual::solve_phase1(HighsModelObject &highs_model_object) {
 #endif
   // Main solving structure
   HighsTimer &timer_ = highs_model_object.timer_;
-  timer_.start(timer_.IterateClock);
+  //  timer_.start(timer_.IterateClock);
+  timer_.start(highs_model_object.simplex_.clock_[IterateClock]);
   model->timer.recordStart(HTICK_ITERATE);
   for (;;) {
     timer_.start(timer_.IterateRebuildClock);
@@ -594,7 +598,8 @@ dblOption[DBLOPT_OBJ_UB]\n", model->dualObjectiveValue, model->dblOption[DBLOPT_
     if (model->mlFg_haveFreshRebuild) break;
   }
 
-  timer_.stop(timer_.IterateClock);
+  timer_.stop(highs_model_object.simplex_.clock_[IterateClock]);
+  //  timer_.stop(timer_.IterateClock);
   model->timer.recordFinish(HTICK_ITERATE);
   if (SolveBailout) return;
 
@@ -655,7 +660,8 @@ void HDual::solve_phase2(HighsModelObject &highs_model_object) {
 #endif
   // Main solving structure
   HighsTimer &timer_ = highs_model_object.timer_;
-  timer_.start(timer_.IterateClock);
+  timer_.start(highs_model_object.simplex_.clock_[IterateClock]);
+  //  timer_.start(timer_.IterateClock);
   model->timer.recordStart(HTICK_ITERATE);
   for (;;) {
     // Outer loop of solve_phase2()
@@ -721,7 +727,8 @@ void HDual::solve_phase2(HighsModelObject &highs_model_object) {
     // Was:	if (model->countUpdate == 0) break;
     if (model->mlFg_haveFreshRebuild) break;
   }
-  timer_.stop(timer_.IterateClock);
+  timer_.stop(highs_model_object.simplex_.clock_[IterateClock]);
+  //  timer_.stop(timer_.IterateClock);
   model->timer.recordFinish(HTICK_ITERATE);
 
   if (SolveBailout) {
