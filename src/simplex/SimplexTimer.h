@@ -60,7 +60,10 @@ enum iClockSimplex {
   UpdateRowEpClock,   //!< Update the tableau rows in PAMI
   SimplexNumClock   //!< Number of simplex clocks
 };
-void NWinitialiseDualSimplexClocks(HighsModelObject & model_object) {
+
+class SimplexTimer {
+ public:
+  void NWinitialiseDualSimplexClocks(HighsModelObject & model_object) {
   HighsTimer & timer = model_object.timer_;
   HighsSimplexInfo & simplex = model_object.simplex_;
   simplex.clock_.resize(SimplexNumClock);
@@ -79,8 +82,8 @@ void NWinitialiseDualSimplexClocks(HighsModelObject & model_object) {
   simplex.clock_[PermWtClock] = timer.clockDef("PERM_WT", "PWT");
   simplex.clock_[ComputeDualClock] = timer.clockDef("COMPUTE_DUAL", "CPD");
   simplex.clock_[CorrectDualClock] = timer.clockDef("CORRECT_DUAL", "CRD");
-  simplex.clock_[CollectPrIfsClock] = timer.clockDef("COMPUTE_PRIMAL", "CPP");
-  simplex.clock_[ComputePrimalClock] = timer.clockDef("COLLECT_PR_IFS", "IFS");
+  simplex.clock_[ComputePrimalClock] = timer.clockDef("COMPUTE_PRIMAL", "CPP");
+  simplex.clock_[CollectPrIfsClock] = timer.clockDef("COLLECT_PR_IFS", "IFS");
   simplex.clock_[ComputeDuobjClock] = timer.clockDef("COMPUTE_DUOBJ", "DOB");
   simplex.clock_[ReportInvertClock] = timer.clockDef("REPORT_INVERT", "RPI");
   simplex.clock_[Chuzr1Clock] = timer.clockDef("CHUZR1", "CR1");
@@ -148,5 +151,5 @@ void NWreportDualSimplexOuterClock(HighsModelObject & model_object) {
       };
   reportSimplexClockList(simplexClockList, model_object);
 };
-
+};
 #endif /* SIMPLEX_SIMPLEXTIMER_H_ */

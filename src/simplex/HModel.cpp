@@ -18,6 +18,8 @@
 #include "HToyIO.h"
 #include "HVector.h"
 
+//#include "HighsModelObject.h" // For timer
+
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -2344,12 +2346,17 @@ void HModel::flipBound(int iCol) {
 // called from the likes of HDual::updatePivots
 void HModel::updateFactor(HVector *column, HVector *row_ep, int *iRow,
                           int *hint) {
+  //  HighsTimer &timer = highs_model_object->timer_;
+  //  HighsSimplexInfo &simplex = highs_model_object->simplex_;
   timer.recordStart(HTICK_UPDATE_FACTOR);
+  //  timer.start(simplex.clock_[UpdateFactorClock]);
+  
   factor_->update(column, row_ep, iRow, hint);
   // Now have a representation of B^{-1}, but it is not fresh
   mlFg_haveInvert = 1;
   if (countUpdate >= limitUpdate) *hint = invertHint_updateLimitReached;
   timer.recordFinish(HTICK_UPDATE_FACTOR);
+  //  timer.stop(simplex.clock_[UpdateFactorClock]);
 }
 
 void HModel::updateMatrix(int columnIn, int columnOut) {

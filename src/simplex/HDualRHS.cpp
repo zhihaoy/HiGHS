@@ -22,6 +22,7 @@
 #include "HModel.h"
 #include "HVector.h"
 #include "HighsModelObject.h"
+#include "SimplexTimer.h"
 
 using std::pair;
 using std::make_pair;
@@ -47,6 +48,8 @@ void HDualRHS::setup(HighsModelObject *highs_model_object
 }
 
 void HDualRHS::choose_normal(int *chIndex) {
+  HighsTimer &timer = workHMO->timer_;
+  HighsSimplexInfo &simplex = workHMO->simplex_;
   // Moved the following to the top to avoid starting the clock for a trivial
   // call. NB Must still call intRandom to maintain sequence of random numbers
   // for code reproducibility!! Never mind if we're not timing the random number
@@ -60,7 +63,10 @@ void HDualRHS::choose_normal(int *chIndex) {
   // Since choose_normal calls itself, only start the clock if it's not
   // currently running
   bool keepTimerRunning = workModel->timer.itemStart[HTICK_CHUZR1] < 0;
-  if (!keepTimerRunning) workModel->timer.recordStart(HTICK_CHUZR1);
+  if (!keepTimerRunning) {
+    workModel->timer.recordStart(HTICK_CHUZR1);
+    timer.start(simplex.clock_[Chuzr1Clock]);
+  }
 
   if (workCount < 0) {
     // DENSE mode
@@ -126,11 +132,17 @@ void HDualRHS::choose_normal(int *chIndex) {
   }
   // Since choose_normal calls itself, only stop the clock if it's not currently
   // running
-  if (!keepTimerRunning) workModel->timer.recordFinish(HTICK_CHUZR1);
+  if (!keepTimerRunning) {
+    workModel->timer.recordFinish(HTICK_CHUZR1);
+    timer.stop(simplex.clock_[Chuzr1Clock]);
+  }
 }
 
 void HDualRHS::choose_multi_global(int *chIndex, int *chCount, int chLimit) {
+  HighsTimer &timer = workHMO->timer_;
+  HighsSimplexInfo &simplex = workHMO->simplex_;
   workModel->timer.recordStart(HTICK_CHUZR1);
+  timer.start(simplex.clock_[Chuzr1Clock]);
 
   for (int i = 0; i < chLimit; i++) chIndex[i] = -1;
 
@@ -186,6 +198,7 @@ void HDualRHS::choose_multi_global(int *chIndex, int *chCount, int chLimit) {
   *chCount = setP.size();
   for (unsigned i = 0; i < setP.size(); i++) chIndex[i] = setP[i].second;
   workModel->timer.recordFinish(HTICK_CHUZR1);
+  timer.stop(simplex.clock_[Chuzr1Clock]);
 }
 
 void HDualRHS::choose_multi_HGauto(int *chIndex, int *chCount, int chLimit) {
@@ -197,13 +210,17 @@ void HDualRHS::choose_multi_HGauto(int *chIndex, int *chCount, int chLimit) {
 }
 
 void HDualRHS::choose_multi_HGpart(int *chIndex, int *chCount, int chLimit) {
+  HighsTimer &timer = workHMO->timer_;
+  HighsSimplexInfo &simplex = workHMO->simplex_;
   workModel->timer.recordStart(HTICK_CHUZR1);
+  timer.start(simplex.clock_[Chuzr1Clock]);
 
   // Force to use partition method, unless doesn't exist
   if (partNum != chLimit) {
     choose_multi_global(chIndex, chCount, chLimit);
     partSwitch = 0;
     workModel->timer.recordFinish(HTICK_CHUZR1);
+    timer.stop(simplex.clock_[Chuzr1Clock]);
     return;
   }
 
@@ -244,6 +261,7 @@ void HDualRHS::choose_multi_HGpart(int *chIndex, int *chCount, int chLimit) {
     // SPARSE mode
     if (workCount == 0) {
       workModel->timer.recordFinish(HTICK_CHUZR1);
+      timer.stop(simplex.clock_[Chuzr1Clock]);
       return;
     }
 
@@ -276,10 +294,14 @@ void HDualRHS::choose_multi_HGpart(int *chIndex, int *chCount, int chLimit) {
   }
 
   workModel->timer.recordFinish(HTICK_CHUZR1);
+  timer.stop(simplex.clock_[Chuzr1Clock]);
 }
 
 void HDualRHS::update_primal(HVector *column, double theta) {
+  HighsTimer &timer = workHMO->timer_;
+  HighsSimplexInfo &simplex = workHMO->simplex_;
   workModel->timer.recordStart(HTICK_UPDATE_PRIMAL);
+  timer.start(simplex.clock_[UpdatePrimalClock]);
 
   const int numRow = workModel->lp_scaled_->numRow_;
   const int columnCount = column->count;
@@ -316,12 +338,16 @@ void HDualRHS::update_primal(HVector *column, double theta) {
   }
 
   workModel->timer.recordFinish(HTICK_UPDATE_PRIMAL);
+  timer.stop(simplex.clock_[UpdatePrimalClock]);
 }
 
 // Update the DSE weights
 void HDualRHS::update_weight_DSE(HVector *column, double DSE_wt_o_rowOut,
                                  double Kai, double *dseArray) {
+  HighsTimer &timer = workHMO->timer_;
+  HighsSimplexInfo &simplex = workHMO->simplex_;
   workModel->timer.recordStart(HTICK_UPDATE_WEIGHT);
+  timer.start(simplex.clock_[UpdateWeightClock]);
 
   const int numRow = workModel->lp_scaled_->numRow_;
   const int columnCount = column->count;
@@ -344,10 +370,14 @@ void HDualRHS::update_weight_DSE(HVector *column, double DSE_wt_o_rowOut,
     }
   }
   workModel->timer.recordFinish(HTICK_UPDATE_WEIGHT);
+  timer.stop(simplex.clock_[UpdateWeightClock]);
 }
 // Update the Devex weights
 void HDualRHS::update_weight_Dvx(HVector *column, double dvx_wt_o_rowOut) {
+  HighsTimer &timer = workHMO->timer_;
+  HighsSimplexInfo &simplex = workHMO->simplex_;
   workModel->timer.recordStart(HTICK_UPDATE_WEIGHT);
+  timer.start(simplex.clock_[UpdateWeightClock]);
 
   const int numRow = workModel->lp_scaled_->numRow_;
   const int columnCount = column->count;
@@ -370,6 +400,7 @@ void HDualRHS::update_weight_Dvx(HVector *column, double dvx_wt_o_rowOut) {
     }
   }
   workModel->timer.recordFinish(HTICK_UPDATE_WEIGHT);
+  timer.stop(simplex.clock_[UpdateWeightClock]);
 }
 
 void HDualRHS::update_pivots(int iRow, double value) {
@@ -391,6 +422,8 @@ void HDualRHS::update_pivots(int iRow, double value) {
 }
 
 void HDualRHS::update_infeasList(HVector *column) {
+  HighsTimer &timer = workHMO->timer_;
+  HighsSimplexInfo &simplex = workHMO->simplex_;
   const int columnCount = column->count;
   const int *columnIndex = &column->index[0];
 
@@ -398,6 +431,7 @@ void HDualRHS::update_infeasList(HVector *column) {
   if (workCount < 0) return;
 
   workModel->timer.recordStart(HTICK_UPDATE_PRIMAL);
+  timer.start(simplex.clock_[UpdatePrimalClock]);
 
   if (workCutoff <= 0) {
     // The regular sparse way
@@ -424,6 +458,7 @@ void HDualRHS::update_infeasList(HVector *column) {
   }
 
   workModel->timer.recordFinish(HTICK_UPDATE_PRIMAL);
+  timer.stop(simplex.clock_[UpdatePrimalClock]);
 }
 
 void HDualRHS::create_infeasArray() {
